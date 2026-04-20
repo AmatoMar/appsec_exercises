@@ -1,0 +1,100 @@
+version: '3.9'
+
+networks:
+  default:
+    name: appsec-network
+
+x-resources: &default-resources
+  deploy:
+    resources:
+      limits:
+        cpus: '0.50'
+        memory: 256M
+
+services:
+
+  # =====================
+  #  SKF Labs
+  # =====================
+
+  idor:
+    image: blabla1337/owasp-skf-lab:idor
+    container_name: appsec-lab-idor
+    ports:
+      - "7000:5000"
+    restart: always
+    #<<: *default-resources
+
+  sqli:
+    image: blabla1337/owasp-skf-lab:sqli
+    container_name: appsec-lab-sqli
+    ports:
+      - "7001:5000"
+    restart: always
+    #<<: *default-resources
+
+  xss:
+    image: blabla1337/owasp-skf-lab:xss
+    container_name: appsec-lab-xss
+    ports:
+      - "7002:5000"
+    restart: always
+    #<<: *default-resources
+
+  ssrf:
+    image: blabla1337/owasp-skf-lab:ssrf
+    container_name: appsec-lab-ssrf
+    ports:
+      - "7003:5000"
+    restart: always
+    #<<: *default-resources
+
+  cmdi:
+    image: blabla1337/owasp-skf-lab:cmd2
+    container_name: appsec-lab-cmdi
+    ports:
+      - "7004:5000"
+    # restart: always
+    #<<: *default-resources
+
+  # =====================
+  #  Applicazioni Target
+  # =====================
+
+  dvwa:
+    image: vulnerables/web-dvwa
+    container_name: appsec-lab-dvwa
+    ports:
+      - "7010:80"
+    restart: always
+    #<<: *default-resources
+
+  juice-shop:
+    image: bkimminich/juice-shop
+    container_name: appsec-lab-juice-shop
+    ports:
+      - "7011:3000"
+    restart: always
+    #<<: *default-resources
+
+  webgoat:
+    image: webgoat/webgoat
+    container_name: appsec-lab-webgoat
+    ports:
+      - "7012:8080"
+      - "7013:9090"
+    restart: always
+    environment:
+      - WEBGOAT_PORT=8080
+      - WEBWOLF_PORT=9090
+    #<<: *default-resources
+
+  # =====================
+  #  Internal only
+  # =====================
+
+  ssrf.internal:
+    image: blabla1337/owasp-skf-lab:ssrf
+    container_name: appsec-lab-ssrf-internal
+    restart: always
+    #<<: *default-resources
